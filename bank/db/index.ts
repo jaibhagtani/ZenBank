@@ -2,7 +2,7 @@
 // Not directly from node modules
 
 // Good Practice
-import { PrismaClient } from "./node_modules/@prisma/xxx-client"
+import { PrismaClient } from "./node_modules/@prisma/client"
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
