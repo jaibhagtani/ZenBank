@@ -11,7 +11,7 @@ export default function RootLayout({
     <html lang="en">
       <Providers>
         <body
-          className="mt-14 bg-slate-100"
+          className="mt-14 bg-blue-300"
         >
             <div className="flex-auto">
               {children}

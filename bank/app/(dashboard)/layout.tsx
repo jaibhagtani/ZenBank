@@ -12,7 +12,7 @@ export default function RootLayout({
       <AppBarClient></AppBarClient>
       <div className="flex overflow-auto">
         <Sidebar />
-        <div className="flex-auto">
+        <div className="flex-auto bg-slate-100">
           {children}
         </div>
       </div>
