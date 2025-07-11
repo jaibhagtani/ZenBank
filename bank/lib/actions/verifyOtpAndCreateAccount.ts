@@ -16,7 +16,6 @@ export async function verifyOtpAndCreateAccount({ phone, email, mpin, otp }:{
     if (!storedOtp) return { error: "OTP expired or not found." };
     if (storedOtp !== otp) return { error: "Invalid OTP." };
 
-    const hashedPassword = await bcrypt.hash(mpin, 10);
 
     const userDetails = await prisma.user.findUnique({
       where: {

@@ -1,5 +1,4 @@
 import { CreateAccountForm } from "@/components/createAccountForm";
-import { Suspense } from "react";
 
 export default async function CreateBankAccountPage() {
    return (

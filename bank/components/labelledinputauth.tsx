@@ -4,11 +4,10 @@ interface LabelledInputProps {
     placeholder : string;
     onChangeFunc : (value : string) => void,
     type?: string;
-    otp ?: boolean;
 }
 
 
-export default function LabelledInputAuth({label, placeholder, onChangeFunc, type, otp} : LabelledInputProps)
+export default function LabelledInputAuth({label, placeholder, onChangeFunc, type} : LabelledInputProps)
 {
     return (
         <div>

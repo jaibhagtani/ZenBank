@@ -10,7 +10,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
     const body = await req.json();
-    const {email, Name, contact, password} = body
+    const {email} = body
     // Not to use signin of nextauth to server 
     try{
         const existingUser = await prisma.user.findFirst({
@@ -40,7 +40,7 @@ export async function POST(req: Request) {
     }
     catch(e)
     {
-        // console.log(e)
+        console.error(e)
         return NextResponse.json( {
             error: "Something wrong happened!!"
         },

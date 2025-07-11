@@ -3,11 +3,11 @@ import { prisma } from "@/db";
 import { redisclient } from "@/redis/redisclient";
 import { notFound } from "next/navigation";
 
-interface PageProps {
-  params: {
-    bankToken: string;
-  };
-}
+// interface PageProps {
+//   params: {
+//     bankToken: string;
+//   };
+// }
 
 async function getAccountDetails(accessToken: string) {
   const walletAccount = await prisma.wallet.findUnique({
@@ -27,8 +27,12 @@ async function getAccountDetails(accessToken: string) {
   return walletAccount;
 }
 
-export default async function BankDepositPage({ params }: PageProps) {
-  const bankToken = (await params).bankToken;
+export default async function BankDepositPage({
+  params,
+}: {
+  params: { bankToken: string };
+}) {
+  const bankToken = params.bankToken;
 
   const depositString = await redisclient.get(`bankToken:${bankToken}`);
   if (!depositString) return notFound();

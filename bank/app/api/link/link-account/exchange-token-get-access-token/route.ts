@@ -52,7 +52,7 @@ export async function POST(req: Request) {
     }
 
     const doneData = JSON.parse(doneDataString);
-    const { userIdAccordingToWallet, accountNumber, ifsc, email, phone, wallet_name, provider } = doneData;
+    const { userIdAccordingToWallet, accountNumber, ifsc, email, phone, provider } = doneData;
 
     const user = await prisma.user.findFirst({
       where: { email, number: phone },

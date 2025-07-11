@@ -13,7 +13,6 @@ export async function OPTIONS() {
 
 export async function POST(req: Request) {
   const origin = req.headers.get("origin");
-  const referer = req.headers.get("referer");
 
   // console.log(origin)
 

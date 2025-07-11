@@ -54,6 +54,7 @@ export async function POST(request: Request) {
             }
     }
     catch(e) {
+        console.error(e)
         return Response.json({
             msg: "Something went Wrong!!"
         },
