@@ -3,6 +3,8 @@ import { prisma } from "@/db";
 import { redisclient } from "@/redis/redisclient";
 import { randomBytes } from "crypto";
 import { NextResponse } from "next/server";
+import dotenv from "dotenv";
+dotenv.config();
 
 export async function OPTIONS() {
   return new NextResponse(null, {
@@ -16,7 +18,7 @@ export async function POST(req: Request) {
 
   // console.log(origin)
 
-  if (origin !== "https://user-zenpay-payments.vercel.app") {
+  if (origin !== `${process.env.NEXT_PUBLIC_ZENPAY_URL}`) {
     return new NextResponse(JSON.stringify({ error: "CORS: Origin not allowed" }), {
       status: 403,
       headers: corsHeaders()

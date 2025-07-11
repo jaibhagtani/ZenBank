@@ -2,14 +2,15 @@ import { prisma } from "@/db";
 import { redisclient } from "@/redis/redisclient";
 import { NextResponse } from "next/server";
 import { randomBytes } from "crypto";
-
+import dotenv from "dotenv";
+dotenv.config();
 // helper to build JSON with CORS
 function corsJsonResponse(body: any, status: number = 200) {
   return new NextResponse(JSON.stringify(body), {
     status,
     headers: {
       "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": `https://user-zenpay-payments.vercel.app`,
+      "Access-Control-Allow-Origin": `${process.env.NEXT_PUBLIC_ZENPAY_URL}`,
       "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type",
       "Access-Control-Allow-Credentials": "true",
@@ -22,7 +23,7 @@ export async function OPTIONS(req: Request) {
   return new NextResponse(null, {
     status: 204,
     headers: {
-      "Access-Control-Allow-Origin": `https://user-zenpay-payments.vercel.app`,
+      "Access-Control-Allow-Origin": `${process.env.NEXT_PUBLIC_ZENPAY_URL}`,
       "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type",
       "Access-Control-Allow-Credentials": "true",
@@ -32,7 +33,7 @@ export async function OPTIONS(req: Request) {
 
 export async function POST(req: Request) {
   const origin = req.headers.get("origin");
-  if (origin !== `https://user-zenpay-payments.vercel.app`) {
+  if (origin !== `${process.env.NEXT_PUBLIC_ZENPAY_URL}`) {
     return corsJsonResponse({ msg: "CORS: Not allowed." }, 403);
   }
 
