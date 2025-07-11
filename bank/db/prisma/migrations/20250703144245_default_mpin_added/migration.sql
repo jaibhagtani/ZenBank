@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "BankUser" ALTER COLUMN "MPIN" SET DEFAULT '0202';

@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output = "../node_modules/@prisma/xxx-client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String   @unique
+  number       String
+  password     String
+  MPIN         String   @default("0202")
+  createdAt    DateTime @default(now())
+
+  accounts Account[]   @relation("UserAccounts")
+}
+
+
+model Account {
+  id            Int      @id @default(autoincrement())
+  userId        Int
+  accountNumber String   @unique
+  ifsc          String   @default("123412341234")
+  amount        Int      @default(200000)
+  createdAt     DateTime @default(now())
+  linkedWallets Wallet[]     
+  user        User              @relation(name: "UserAccounts", fields: [userId], references: [id])
+  deposits    DepositToBankTransaction[]
+  withdrawals WithdrawFromBankTransaction[]
+}
+
+
+model Wallet {
+  id           Int      @id @default(autoincrement())
+  accountId    Int
+  walletUserId Int?     
+  name         String 
+  accessToken  String?  @unique
+  account      Account  @relation(fields: [accountId], references: [id])
+}
+
+
+model DepositToBankTransaction {
+  id            Int               @id @default(autoincrement())
+  accountId     Int
+  amount        Int
+  status        TransactionStatus
+  provider      String
+  withdrawToken String            @unique
+  createdAt     DateTime          @default(now())
+
+  account Account @relation(fields: [accountId], references: [id])
+}
+
+model WithdrawFromBankTransaction {
+  id            Int               @id @default(autoincrement())
+  accountId     Int
+  amount        Int
+  status        TransactionStatus
+  provider      String
+  bankToken     String            @unique
+  walletToken   String            @unique
+  createdAt     DateTime          @default(now())
+
+  account Account @relation(fields: [accountId], references: [id])
+}
+
+enum TransactionStatus {
+  PROCESSING
+  SUCCESS
+  FAILURE
+}

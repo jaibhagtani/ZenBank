@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "BankAccount" ALTER COLUMN "ifsc" SET DEFAULT '123412341234';
