@@ -7,7 +7,7 @@
     "build": "eslint . && next build",
     "start": "next start -p 4000",
     "lint": "next lint",
-    "postinstall": "cd /db && npx prisma generate"
+    "postinstall": "cd db && npx prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^6.11.1",
