@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const nextConfig: NextConfig = {
-  reactStrictMode: true,
+  reactStrictMode: false,
   env: {
     NEXT_PUBLIC_ZENPAY_URL: process.env.NEXT_PUBLIC_ZENPAY_URL,
     BANK_WEBHOOK_URL_ZENPAY: process.env.BANK_WEBHOOK_URL_ZENPAY,
