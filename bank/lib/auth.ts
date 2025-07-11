@@ -38,7 +38,7 @@ export const NEXT_AUTH : AuthOptions= {
       async authorize(credentials) {
         if (!credentials || !signinSchema.safeParse(credentials).success) return null;
 
-        const user = await prisma.user.findFirst({
+        const user = await prisma.user.findFirstOrThrow({
           where: { number: credentials.phone },
         });
         if (!user) return null;
@@ -46,7 +46,7 @@ export const NEXT_AUTH : AuthOptions= {
         const valid = await bcrypt.compare(credentials.password, user.password);
         if (!valid) return null;
 
-        const account = await prisma.account.findFirst({ where: { userId: user.id } });
+        const account = await prisma.account.findFirstOrThrow({ where: { userId: user.id } });
 
         return {
           id: user.id.toString(),
