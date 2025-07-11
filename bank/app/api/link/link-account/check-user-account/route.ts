@@ -14,7 +14,7 @@ export async function POST(req: Request) {
 
     const user = await prisma.user.findFirst({
       where: { name, email, number: phone },
-      include: { accounts: true }, // OR `account: true` based on your model
+      include: { accounts: true },
     });
 
     if (!user) {

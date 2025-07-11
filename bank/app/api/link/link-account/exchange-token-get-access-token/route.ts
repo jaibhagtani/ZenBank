@@ -9,7 +9,7 @@ function corsJsonResponse(body: any, status: number = 200) {
     status,
     headers: {
       "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": `${process.env.NEXT_PUBLIC_ZENPAY_URL}`,
+      "Access-Control-Allow-Origin": `https://user-zenpay-payments.vercel.app`,
       "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type",
       "Access-Control-Allow-Credentials": "true",
@@ -22,7 +22,7 @@ export async function OPTIONS(req: Request) {
   return new NextResponse(null, {
     status: 204,
     headers: {
-      "Access-Control-Allow-Origin": `${process.env.NEXT_PUBLIC_ZENPAY_URL}`,
+      "Access-Control-Allow-Origin": `https://user-zenpay-payments.vercel.app`,
       "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type",
       "Access-Control-Allow-Credentials": "true",
@@ -32,7 +32,7 @@ export async function OPTIONS(req: Request) {
 
 export async function POST(req: Request) {
   const origin = req.headers.get("origin");
-  if (origin !== `${process.env.NEXT_PUBLIC_ZENPAY_URL}`) {
+  if (origin !== `https://user-zenpay-payments.vercel.app`) {
     return corsJsonResponse({ msg: "CORS: Not allowed." }, 403);
   }
 

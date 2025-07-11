@@ -16,7 +16,7 @@ export async function POST(req: Request) {
 
   // console.log(origin)
 
-  if (origin !== `${process.env.NEXT_PUBLIC_ZENPAY_URL}`) {
+  if (origin !== "https://user-zenpay-payments.vercel.app") {
     return new NextResponse(JSON.stringify({ error: "CORS: Origin not allowed" }), {
       status: 403,
       headers: corsHeaders()
