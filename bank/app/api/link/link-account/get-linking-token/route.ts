@@ -18,7 +18,7 @@ export async function POST(req: Request) {
 
   console.log(origin)
 
-  if (origin !== `http://localhost:3000`) {
+  if (origin !== `${process.env.NEXT_PUBLIC_ZENPAY_URL}`) {
     return new NextResponse(JSON.stringify({ error: "CORS: Origin not allowed" }), {
       status: 403,
       headers: corsHeaders()
@@ -96,7 +96,7 @@ export async function POST(req: Request) {
 
 function corsHeaders() {
   return {
-    "Access-Control-Allow-Origin": `http://localhost:3000`,
+    "Access-Control-Allow-Origin": `${process.env.NEXT_PUBLIC_ZENPAY_URL}`,
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
     // "Access-Control-Allow-Credentials": "true"
