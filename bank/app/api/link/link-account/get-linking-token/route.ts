@@ -9,7 +9,7 @@ dotenv.config();
 export async function OPTIONS() {
   return new NextResponse(null, {
     status: 204,
-    // headers: corsHeaders()
+    headers: corsHeaders()
   });
 }
 
@@ -79,7 +79,7 @@ export async function POST(req: Request) {
     return new NextResponse(
       JSON.stringify({ msg: "Correct details", token: token }),
       { status: 200, 
-        // headers: corsHeaders()
+        headers: corsHeaders()
       }
     );
 
@@ -88,17 +88,17 @@ export async function POST(req: Request) {
     return new NextResponse(
       JSON.stringify({ error: "Something went wrong!" }),
       { status: 500, 
-        // headers: corsHeaders()
+        headers: corsHeaders()
       }
     );
   }
 }
 
-// function corsHeaders() {
-//   return {
-//     "Access-Control-Allow-Origin": `${process.env.NEXT_PUBLIC_ZENPAY_URL}`,
-//     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-//     "Access-Control-Allow-Headers": "Content-Type, Authorization",
-//     "Access-Control-Allow-Credentials": "true"
-//   };
-// }
+function corsHeaders() {
+  return {
+    "Access-Control-Allow-Origin": `*`,
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    "Access-Control-Allow-Credentials": "true"
+  };
+}
