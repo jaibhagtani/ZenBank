@@ -18,7 +18,7 @@ export async function POST(req: Request) {
 
   console.log(origin)
 
-  if (origin !== `${process.env.NEXT_PUBLIC_ZENPAY_URL}`) {
+  if (origin !== `https://user-zenpay-payments.vercel.app/` && origin !== "https://user-zenpay-payments.vercel.app") {
     return new NextResponse(JSON.stringify({ error: "CORS: Origin not allowed" }), {
       status: 403,
       headers: corsHeaders()
@@ -57,7 +57,7 @@ export async function POST(req: Request) {
       );
     }
 
-    
+
 
     const token = randomBytes(32).toString("hex");
     const expiresInSeconds = 60 * 5;
@@ -97,7 +97,7 @@ export async function POST(req: Request) {
 
 function corsHeaders() {
   return {
-    "Access-Control-Allow-Origin": `${process.env.NEXT_PUBLIC_ZENPAY_URL}`,
+    "Access-Control-Allow-Origin": "https://user-zenpay-payments.vercel.app",
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
     // "Access-Control-Allow-Credentials": "true"
