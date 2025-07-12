@@ -14,16 +14,16 @@ export async function OPTIONS() {
 }
 
 export async function POST(req: Request) {
-  // const origin = req.headers.get("origin");
+  const origin = req.headers.get("origin");
 
-  // console.log(origin)
+  console.log(origin)
 
-  // if (origin !== `${process.env.NEXT_PUBLIC_ZENPAY_URL}`) {
-  //   return new NextResponse(JSON.stringify({ error: "CORS: Origin not allowed" }), {
-  //     status: 403,
-  //     headers: corsHeaders()
-  //   });
-  // }
+  if (origin !== `${process.env.NEXT_PUBLIC_ZENPAY_URL}`) {
+    return new NextResponse(JSON.stringify({ error: "CORS: Origin not allowed" }), {
+      status: 403,
+      headers: corsHeaders()
+    });
+  }
 
   // if (!referer?.startsWith(`${process.env.NEXT_PUBLIC_ZENPAY_URL}`)) {
   //   return new NextResponse(JSON.stringify({ error: "Invalid referer path" }), {
