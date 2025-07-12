@@ -57,6 +57,7 @@ export async function POST(req: Request) {
       );
     }
 
+    
 
     const token = randomBytes(32).toString("hex");
     const expiresInSeconds = 60 * 5;
