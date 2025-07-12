@@ -1,4 +1,4 @@
-"use server";
+"use server"
 import { prisma } from "@/db";
 import { redisclient } from "@/redis/redisclient";
 import { randomBytes } from "crypto";
@@ -9,7 +9,7 @@ dotenv.config();
 export async function OPTIONS() {
   return new NextResponse(null, {
     status: 204,
-    headers: corsHeaders(),
+    headers: corsHeaders()
   });
 }
 
@@ -34,15 +34,7 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const {
-      userIdAccordingToWallet,
-      phoneNumber,
-      accountNumber,
-      ifsc,
-      email,
-      call_back_URL,
-      provider,
-    } = body;
+    const { userIdAccordingToWallet, phoneNumber, accountNumber, ifsc, email, call_back_URL, provider } = body;
 
     const isExistingUser = await prisma.user.findFirst({
       where: {
@@ -50,27 +42,21 @@ export async function POST(req: Request) {
         number: phoneNumber,
       },
       include: {
-        accounts: true,
-      },
+        accounts: true
+      }
     });
 
-    if (
-      !isExistingUser ||
-      !isExistingUser.accounts.some(
-        (acc) => acc.accountNumber === accountNumber && acc.ifsc === ifsc
-      )
-    ) {
+    if (!isExistingUser || !isExistingUser.accounts.some(acc =>
+        acc.accountNumber === accountNumber && acc.ifsc === ifsc
+      )) {
       return new NextResponse(
-        JSON.stringify({
-          msg: "User doesn't have this account or incorrect details!",
-          token: null,
-        }),
-        {
-          status: 400,
-          headers: corsHeaders(),
+        JSON.stringify({ msg: "User doesn't have this account or incorrect details!", token: null }),
+        { status: 400, 
+          headers: corsHeaders()
         }
       );
     }
+
 
     const token = randomBytes(32).toString("hex");
     const expiresInSeconds = 60 * 5;
@@ -85,25 +71,24 @@ export async function POST(req: Request) {
         email,
         call_back_URL,
         accountNumber,
-        provider,
+        provider
       }),
       { EX: expiresInSeconds }
     );
 
     return new NextResponse(
       JSON.stringify({ msg: "Correct details", token: token }),
-      {
-        status: 200,
-        headers: corsHeaders(),
+      { status: 200, 
+        headers: corsHeaders()
       }
     );
+
   } catch (err) {
     console.error(err);
     return new NextResponse(
       JSON.stringify({ error: "Something went wrong!" }),
-      {
-        status: 500,
-        headers: corsHeaders(),
+      { status: 500, 
+        headers: corsHeaders()
       }
     );
   }
@@ -111,9 +96,9 @@ export async function POST(req: Request) {
 
 function corsHeaders() {
   return {
-    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Origin": `*`,
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    "Access-Control-Allow-Credentials": "true",
+    "Access-Control-Allow-Headers": "Content-Type",
+    // "Access-Control-Allow-Credentials": "true"
   };
 }
