@@ -85,7 +85,7 @@ app.post("/zenpayWebhook", async (req: Request, res: Response): Promise<void> =>
   }
 });
 
-app.get("/", (_, res) => {res.send("Withdraw Worker is running")});
+app.get("/", (_, res) => {res.send("Wallet Webhook is running")});
 
 app.listen(port, () => {
   // console.log(`ZenPay webhook server running on port ${port}`);
