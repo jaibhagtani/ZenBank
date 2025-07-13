@@ -16,16 +16,16 @@ export async function OPTIONS() {
 export async function POST(req: Request) {
   const origin = req.headers.get("origin");
   const referer = req.headers.get("referer")
-  console.log(origin)
+  // console.log(origin)
 
-  // if (origin !== `http://localhost:3000` && origin !== "https://user-zenpay-payments.vercel.app") {
-  //   return new NextResponse(JSON.stringify({ error: "CORS: Origin not allowed" }), {
-  //     status: 403,
-  //     headers: corsHeaders()
-  //   });
-  // }
+  if (origin !== "https://user-zenpay-payments.vercel.app") {
+    return new NextResponse(JSON.stringify({ error: "CORS: Origin not allowed" }), {
+      status: 403,
+      headers: corsHeaders()
+    });
+  }
 
-  if (!referer?.startsWith(`${process.env.NEXT_PUBLIC_ZENPAY_URL}`)) {
+  if (!referer?.startsWith(`https://user-zenpay-payments.vercel.app/`)) {
     return new NextResponse(JSON.stringify({ error: "Invalid referer path" }), {
       status: 403,
       headers: corsHeaders()
@@ -97,7 +97,7 @@ export async function POST(req: Request) {
 
 function corsHeaders() {
   return {
-    "Access-Control-Allow-Origin": "http://localhost:3000",
+    "Access-Control-Allow-Origin": "https://user-zenpay-payments.vercel.app",
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
     // "Access-Control-Allow-Credentials": "true"
