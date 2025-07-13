@@ -86,5 +86,5 @@ app.post("/zenpayWebhook", async (req: Request, res: Response): Promise<void> =>
 });
 
 app.listen(port, () => {
-  console.log(`ZenPay webhook server running on port ${port}`);
+  // console.log(`ZenPay webhook server running on port ${port}`);
 });
