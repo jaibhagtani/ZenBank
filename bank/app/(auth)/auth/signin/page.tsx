@@ -2,6 +2,7 @@ import FormPageSignin from "@/components/formpagesignin";
 import { NEXT_AUTH } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
+import { RiBankLine } from "react-icons/ri";
 
 export default async function RegisterPage() {
   const session = await getServerSession(NEXT_AUTH);
@@ -18,15 +19,7 @@ export default async function RegisterPage() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,#ffffff22,transparent_70%)] z-0 opacity-20" />
 
           <div className="z-10 mb-6">
-            <svg
-              className="w-16 h-16 text-white"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              viewBox="0 0 24 24"
-            >
-              <path d="M3 6a2 2 0 012-2h14a2 2 0 012 2v1H3V6zM3 9h18v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-            </svg>
+            <RiBankLine size={110} />
           </div>
 
           <div className="z-10">
