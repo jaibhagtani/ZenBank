@@ -1,10 +1,19 @@
 import express, { Request, Response } from "express";
 import { z } from "zod";
 import { prisma } from "./db";
+import cors from "cors";
 
 const app = express();
 const port = process.env.PORT;
 app.use(express.json());
+
+app.use(
+  cors({
+    origin: `${process.env.WALLET_WITHDRAWAL_SWEEPER_URL}`,
+    methods: ["POST"],
+    allowedHeaders: ["Content-Type"],
+  })
+);
 
 const webhookSchema = z.object({
   withdrawToken: z.string(),
