@@ -1,16 +1,16 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import LabelledInputAuth from "./labelledinputauth";
 import { LoginButton } from "./loginbutton";
 
 export default function FormPageSignin() {
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [isLoading, setisLoading] = useState(false);
   const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -21,17 +21,12 @@ export default function FormPageSignin() {
     }
   }, [searchParams]);
 
-  async function onSubmit(
-    e?: React.FormEvent,
-    phoneOverride?: string,
-    passwordOverride?: string
-  ) {
-    if (e) e.preventDefault();
-    setIsLoading(true);
+  async function signInUser(phone: string, pass: string) {
+    setisLoading(true);
     try {
       const res = await signIn("signin", {
-        phone: phoneOverride || phoneNumber,
-        password: passwordOverride || password,
+        phone,
+        password: pass,
         redirect: false,
       });
 
@@ -45,8 +40,17 @@ export default function FormPageSignin() {
       console.log(err);
       alert("Something went wrong. Please try again.");
     } finally {
-      setIsLoading(false);
+      setisLoading(false);
     }
+  }
+
+  async function onSubmit(e?: React.FormEvent) {
+    if (e) e.preventDefault();
+    await signInUser(phoneNumber, password);
+  }
+
+  async function onDemoClick() {
+    await signInUser("1212121212", "121212");
   }
 
   return (
@@ -133,7 +137,7 @@ export default function FormPageSignin() {
         <div className="flex justify-center">
           <button
             type="button"
-            onClick={() => onSubmit(undefined, "1212121212", "121212")}
+            onClick={onDemoClick}
             className="mt-4 bg-indigo-500 text-white rounded-xl py-2 px-6 font-medium hover:bg-indigo-600 transition"
           >
             Use Demo Credentials

@@ -9,7 +9,7 @@ export default function RootLayout({
         <body
           className="bg-blue-300"
         >
-          <div className="flex overflow-auto">
+          <div className="flex">
             <div className="flex-auto">
               {children}
             </div>
