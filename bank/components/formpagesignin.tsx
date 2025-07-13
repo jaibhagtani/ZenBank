@@ -58,8 +58,8 @@ export default function FormPageSignin() {
       onSubmit={onSubmit}
       className="w-full max-w-lg mx-auto my-12 px-8 py-10 bg-white rounded-3xl border border-gray-300 shadow-lg"
     >
-      <div className="flex items-center justify-center gap-3 pb-2 text-purple-700">
-        <span className="font-extrabold text-4xl tracking-tight">ZenPay</span>
+      <div className="flex items-center justify-center gap-3 pb-2 text-indigo-700">
+        <span className="font-bold text-4xl tracking-tight">ZenBank</span>
       </div>
 
       <div className="text-center text-2xl font-bold text-gray-800 mt-2 mb-10">
