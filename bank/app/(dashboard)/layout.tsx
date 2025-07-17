@@ -10,9 +10,9 @@ export default function RootLayout({
   return (
     <>
       <AppBarClient></AppBarClient>
-      <div className="flex overflow-auto">
+      <div className="mt-2 flex overflow-auto">
         <Sidebar />
-        <div className="flex-auto bg-slate-100">
+        <div className="mt-8 flex-auto bg-slate-100">
           {children}
         </div>
       </div>
