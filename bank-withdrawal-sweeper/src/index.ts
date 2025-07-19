@@ -130,12 +130,14 @@ async function startWorkerLoop() {
     if (!redisclient.isOpen) {
       await redisclient.connect();
     }
+    const result = await redisclient.BLPOP("withdrawUserQueue:transactions", 0);
 
-    const job = await redisclient.LPOP("wallet:transactions");
-    if (!job) {
-      await sleep(100);
+    // result will always be non-null unless an error occurs, so this check is optional
+    if (!result) {
       continue;
+      // Process the withdrawToken here
     }
+    const [_, job] : any = result;
 
     const txnKey = `txn:${job}`;
     const jobData = await redisclient.get(txnKey);
