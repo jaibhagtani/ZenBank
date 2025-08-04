@@ -130,16 +130,15 @@ async function startWorkerLoop() {
         await redisclient.connect();
       }
 
-      const result = await redisclient.blPop(["withdrawUserQueue:transactions"], 0);
-
-      if (!result) {
+      const result = await redisclient.blPop(["wallet:transactions"], 0);
+      if (!result) 
+      {
         continue;
       }
 
       const { element: job } = result;
       const txnKey = `txn:${job}`;
       const jobData = await redisclient.get(txnKey);
-
       if (typeof jobData !== "string") {
         await sleep(100);
         continue;
