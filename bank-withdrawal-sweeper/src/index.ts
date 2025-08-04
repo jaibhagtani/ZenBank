@@ -36,7 +36,6 @@ async function sendWebhook(url: string, payload: any): Promise<"Captured" | "Ret
     });
 
     const data = await res.json();
-    // console.log(`[WEBHOOK] Response from wallet:`, data);
 
     return data?.msg === "Captured" ? "Captured" : "Retry";
   } catch (error) {
@@ -54,7 +53,6 @@ async function handleTransaction(userId: string, txn: Omit<TransactionPayload, "
   let accountId: number;
 
   try {
-    // Phase 1: Validate & Record INTENT (do not deduct)
     await prisma.$transaction(async (tx) => {
       await tx.$queryRaw`SELECT * FROM "Account" WHERE "accountNumber" = ${accountNumber} FOR UPDATE`;
 
@@ -128,48 +126,43 @@ async function startWorkerLoop() {
   // console.log("Worker started and polling Redis queue");
 
   while (true) {
-    try {
-      if (!redisclient.isOpen) {
-        await redisclient.connect();
-      }
-      const job = await redisclient.lPop("withdrawUserQueue:transactions");
+    if (!redisclient.isOpen) {
+      await redisclient.connect();
+    }
+    const job = await redisclient.lPop("withdrawUserQueue:transactions");
 
-      if (!job) {
+    if (!job) {
+      await sleep(100);
+      continue;
+    }
+
+    const txnKey = `txn:${job}`;
+    const jobData = await redisclient.get(txnKey);
+
+    if (typeof jobData === "string") {
+      const { userId, ...rest } = JSON.parse(jobData) as TransactionPayload;
+      const lockKey = `lock:user:${userId}`;
+      const lock = await redisclient.set(lockKey, "locked", { NX: true, EX: 10 });
+
+      if (!lock) {
+        await redisclient.RPUSH("wallet:transactions", job);
         await sleep(100);
         continue;
       }
 
-      const txnKey = `txn:${job}`;
-      const jobData = await redisclient.get(txnKey);
+      try {
+        const result = await handleTransaction(userId, rest, txnKey);
+        // console.log("[RESULT]", result);
 
-      if (typeof jobData === "string") {
-        const { userId, ...rest } = JSON.parse(jobData) as TransactionPayload;
-        const lockKey = `lock:user:${userId}`;
-        const lock = await redisclient.set(lockKey, "locked", { NX: true, EX: 10 });
-  
-        if (!lock) {
+        if (result !== "Captured") {
+          console.warn(`[RETRY] Re-pushing txn:${rest.bankToken}`);
           await redisclient.RPUSH("wallet:transactions", job);
-          await sleep(100);
-          continue;
         }
-  
-        try {
-          const result = await handleTransaction(userId, rest, txnKey);
-          // console.log("[RESULT]", result);
-  
-          if (result !== "Captured") {
-            console.warn(`[RETRY] Re-pushing txn:${rest.bankToken}`);
-            await redisclient.RPUSH("wallet:transactions", job);
-          }
-        } finally {
-          await redisclient.del(lockKey);
-        }
-      } else {
-        await sleep(100);
+      } finally {
+        await redisclient.del(lockKey);
       }
-    }
-    finally {
-      console.error("error occured");
+    } else {
+      await sleep(100);
     }
   }
 }
