@@ -6,12 +6,7 @@ const app = express();
 const PORT = process.env.PORT;
 
 export const redisclient = createClient({
-  url: "rediss://default:ATKqAAIjcDFjODM2YjJmMTkwYjY0YjNhOTUyYThhMTE4NmZlOTA5MHAxMA@inspired-wahoo-12970.upstash.io:6379",
-  socket: {
-    tls: true,
-    rejectUnauthorized: false,
-    host: "inspired-wahoo-12970.upstash.io",
-  },
+  url: process.env.REDIS_URL
 });
 
 
