@@ -6,8 +6,14 @@ const app = express();
 const PORT = process.env.PORT;
 
 export const redisclient = createClient({
-  url: process.env.REDIS_URL
+  url: "rediss://default:ATKqAAIjcDFjODM2YjJmMTkwYjY0YjNhOTUyYThhMTE4NmZlOTA5MHAxMA@inspired-wahoo-12970.upstash.io:6379",
+  socket: {
+    tls: true,
+    rejectUnauthorized: false,
+    host: "inspired-wahoo-12970.upstash.io",
+  },
 });
+
 
 interface TransactionPayload {
   userId: string;
@@ -127,43 +133,48 @@ async function startWorkerLoop() {
   // console.log("Worker started and polling Redis queue");
 
   while (true) {
-    if (!redisclient.isOpen) {
-      await redisclient.connect();
-    }
-    const result = await redisclient.blPop(["withdrawUserQueue:transactions"], 0);
+    try {
+      if (!redisclient.isOpen) {
+        await redisclient.connect();
+      }
+      const job = await redisclient.lPop("withdrawUserQueue:transactions");
 
-    if (!result) {
-      continue;
-    }
-    const { element: job } = result;
-
-    const txnKey = `txn:${job}`;
-    const jobData = await redisclient.get(txnKey);
-
-    if (typeof jobData === "string") {
-      const { userId, ...rest } = JSON.parse(jobData) as TransactionPayload;
-      const lockKey = `lock:user:${userId}`;
-      const lock = await redisclient.set(lockKey, "locked", { NX: true, EX: 10 });
-
-      if (!lock) {
-        await redisclient.RPUSH("wallet:transactions", job);
+      if (!job) {
         await sleep(100);
         continue;
       }
 
-      try {
-        const result = await handleTransaction(userId, rest, txnKey);
-        // console.log("[RESULT]", result);
+      const txnKey = `txn:${job}`;
+      const jobData = await redisclient.get(txnKey);
 
-        if (result !== "Captured") {
-          console.warn(`[RETRY] Re-pushing txn:${rest.bankToken}`);
+      if (typeof jobData === "string") {
+        const { userId, ...rest } = JSON.parse(jobData) as TransactionPayload;
+        const lockKey = `lock:user:${userId}`;
+        const lock = await redisclient.set(lockKey, "locked", { NX: true, EX: 10 });
+  
+        if (!lock) {
           await redisclient.RPUSH("wallet:transactions", job);
+          await sleep(100);
+          continue;
         }
-      } finally {
-        await redisclient.del(lockKey);
+  
+        try {
+          const result = await handleTransaction(userId, rest, txnKey);
+          // console.log("[RESULT]", result);
+  
+          if (result !== "Captured") {
+            console.warn(`[RETRY] Re-pushing txn:${rest.bankToken}`);
+            await redisclient.RPUSH("wallet:transactions", job);
+          }
+        } finally {
+          await redisclient.del(lockKey);
+        }
+      } else {
+        await sleep(100);
       }
-    } else {
-      await sleep(100);
+    }
+    finally {
+      console.error("error occured");
     }
   }
 }
