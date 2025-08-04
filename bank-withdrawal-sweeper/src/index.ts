@@ -124,47 +124,55 @@ async function handleTransaction(userId: string, txn: Omit<TransactionPayload, "
 
 async function startWorkerLoop() {
   // console.log("Worker started and polling Redis queue");
-
   while (true) {
-    if (!redisclient.isOpen) {
-      await redisclient.connect();
-    }
-    const job = await redisclient.lPop("withdrawUserQueue:transactions");
+    try {
+      if (!redisclient.isOpen) {
+        await redisclient.connect();
+      }
 
-    if (!job) {
-      await sleep(100);
-      continue;
-    }
+      const result = await redisclient.blPop(["withdrawUserQueue:transactions"], 0);
 
-    const txnKey = `txn:${job}`;
-    const jobData = await redisclient.get(txnKey);
+      if (!result) {
+        continue;
+      }
 
-    if (typeof jobData === "string") {
+      const { element: job } = result;
+      const txnKey = `txn:${job}`;
+      const jobData = await redisclient.get(txnKey);
+
+      if (typeof jobData !== "string") {
+        await sleep(100);
+        continue;
+      }
+
       const { userId, ...rest } = JSON.parse(jobData) as TransactionPayload;
       const lockKey = `lock:user:${userId}`;
       const lock = await redisclient.set(lockKey, "locked", { NX: true, EX: 10 });
 
       if (!lock) {
-        await redisclient.RPUSH("wallet:transactions", job);
-        await sleep(100);
+        console.log(`[LOCK] Job for user ${userId} is locked, skipping for now`);
+        await sleep(100); // wait before continuing
         continue;
       }
 
       try {
         const result = await handleTransaction(userId, rest, txnKey);
-        // console.log("[RESULT]", result);
 
         if (result !== "Captured") {
-          console.warn(`[RETRY] Re-pushing txn:${rest.bankToken}`);
-          await redisclient.RPUSH("wallet:transactions", job);
+          console.warn(`[RETRY] Transaction ${rest.bankToken} failed, re-queueing`);
+          await redisclient.rPush("withdrawUserQueue:transactions", job);
+        } else {
+          await redisclient.del(txnKey);
         }
       } finally {
         await redisclient.del(lockKey);
       }
-    } else {
-      await sleep(100);
+    } catch (err) {
+      console.error("[WORKER ERROR]", err);
+      await sleep(1000);
     }
   }
+
 }
 
 app.get("/", (_, res) => {
