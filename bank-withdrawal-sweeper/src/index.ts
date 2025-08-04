@@ -6,7 +6,12 @@ const app = express();
 const PORT = process.env.PORT;
 
 export const redisclient = createClient({
-  url: process.env.REDIS_URL
+  url: process.env.REDIS_URL,
+  // socket: {
+  //   tls: true,
+  //   rejectUnauthorized: false,
+  //   host: "inspired-wahoo-12970.upstash.io",
+  // }
 });
 
 
@@ -135,7 +140,7 @@ async function startWorkerLoop() {
       {
         continue;
       }
-
+      
       const { element: job } = result;
       const txnKey = `txn:${job}`;
       const jobData = await redisclient.get(txnKey);

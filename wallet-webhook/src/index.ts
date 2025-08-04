@@ -14,13 +14,13 @@ const webhookSchema = z.object({
 });
 
 app.post("/zenpayWebhook", async (req: Request, res: Response): Promise<void> => {
+  console.log(req.body);
   const parsed = webhookSchema.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ msg: "Invalid payload" });
     return;
   }
 
-  
   const { withdrawToken, accessToken, amount, provider } = parsed.data;
 
   try {
