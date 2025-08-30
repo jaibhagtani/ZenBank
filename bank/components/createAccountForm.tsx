@@ -80,8 +80,8 @@ export function CreateAccountForm() {
         console.log("HERE")
       return alert(res.error);
     } else {
-      alert(res?.message || "Account created!");
       router.push("/dashboard");
+      alert(res?.message || "Account created!");
     }
   };
 
