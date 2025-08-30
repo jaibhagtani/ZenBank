@@ -31,8 +31,8 @@ export default function FormPageSignin() {
       });
 
       if (!res?.error) {
-        alert("Signed in Successfully!!");
         router.push("/dashboard");
+        alert("Signed in Successfully!!");
       } else {
         alert("Invalid phone number or password");
       }

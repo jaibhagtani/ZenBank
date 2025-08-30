@@ -102,8 +102,8 @@ export default function FormPageSignup() {
           console.error(signUpRes.error);
           alert("Something went wrong during Sign Up");
         } else {
-          alert("Signed up successfully!!");
           router.push("/mpin/set");
+          alert("Signed up successfully!!");
         }
       } else if (res.status === 400) {
         alert("User Already have an Account!!");

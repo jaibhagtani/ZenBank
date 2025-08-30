@@ -40595,6 +40595,7 @@ var webhookSchema = external_exports.object({
   provider: external_exports.string()
 });
 app.post("/zenpayWebhook", async (req, res) => {
+  console.log(req.body);
   const parsed = webhookSchema.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ msg: "Invalid payload" });
